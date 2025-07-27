@@ -18,7 +18,18 @@ services:
       - 'grafana_storage:/var/lib/grafana'
     depends_on:
       - prometheus
+  weather-api:
+    image: weather-api
+    build:
+      context: ./api
+    environment:
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
+    container_name: weather-api
+    ports:
+      - "5000:5000"
+    depends_on:
+      - prometheus
 
 volumes:
-  grafana_storage: {}
-  prometheus-data: {}
+  grafana_storage: { }
+  prometheus-data: { }
