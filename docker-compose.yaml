@@ -25,10 +25,21 @@ services:
     environment:
       WEATHER_API_KEY: ${WEATHER_API_KEY}
     container_name: weather-api
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
     depends_on:
       - prometheus
+  nginx:
+    image: nginx:1.29-alpine
+    container_name: nginx
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - nginx-logs:/var/log/nginx
+    depends_on:
+      - weather-api
 
 volumes:
   grafana_storage: { }

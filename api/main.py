@@ -5,13 +5,14 @@ import requests
 from flask import Flask
 from prometheus_client import make_wsgi_app, Counter, Gauge
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
 DEFAULT_CITY = "BOGOTA"
 WEATHER_API = "https://api.weatherapi.com/v1"
 # Add prometheus wsgi middleware to route /metrics requests
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
-
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 # Define prometheus metrics
 REQUEST_COUNTER = Counter(
